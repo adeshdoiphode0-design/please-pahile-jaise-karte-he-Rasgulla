@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Flower Garden</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background: linear-gradient(to bottom, #1a1a2e, #16213e);
+            height: 100vh;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            font-family: 'Arial', sans-serif;
+        }
+
+        #instructions {
+            position: absolute;
+            top: 20px;
+            color: white;
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        .flower {
+            position: absolute;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            animation: grow 2s ease-out forwards, sway 3s ease-in-out infinite alternate;
+            transform-origin: bottom center;
+        }
+
+        /* The Petals */
+        .petals {
+            position: relative;
+            width: 40px;
+            height: 40px;
+        }
+
+        .petal {
+            position: absolute;
+            width: 25px;
+            height: 25px;
+            background: #ff4d6d;
+            border-radius: 50% 50% 0 50%;
+            transform-origin: bottom right;
+            opacity: 0.9;
+        }
+
+        .petal:nth-child(1) { transform: rotate(0deg); }
+        .petal:nth-child(2) { transform: rotate(72deg); }
+        .petal:nth-child(3) { transform: rotate(144deg); }
+        .petal:nth-child(4) { transform: rotate(216deg); }
+        .petal:nth-child(5) { transform: rotate(288deg); }
+
+        .center {
+            position: absolute;
+            width: 15px;
+            height: 15px;
+            background: #ffbe0b;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 2;
+        }
+
+        /* The Stem */
+        .stem {
+            width: 4px;
+            height: 80px;
+            background: #2d6a4f;
+            border-radius: 2px;
+        }
+
+        /* Animations */
+        @keyframes grow {
+            0% { transform: scale(0) translateY(100px); }
+            100% { transform: scale(1) translateY(0); }
+        }
+
+        @keyframes sway {
+            0% { transform: rotate(-2deg); }
+            100% { transform: rotate(2deg); }
+        }
+
+        /* Small leaves on the stem */
+        .leaf {
+            position: absolute;
+            width: 15px;
+            height: 8px;
+            background: #2d6a4f;
+            border-radius: 10px 0 10px 0;
+            top: 50px;
+        }
+        .leaf.right {
+            left: 4px;
+            transform: scaleX(-1);
+        }
+    </style>
+</head>
+<body>
+
+    <div id="instructions">Click anywhere to grow a flower</div>
+
+    <script>
+        const colors = ['#ffadad', '#ffd6a5', '#fdffb6', '#caffbf', '#9bf6ff', '#a0c4ff', '#bdb2ff', '#ffc6ff'];
+
+        document.addEventListener('click', (e) => {
+            createFlower(e.clientX, e.clientY);
+        });
+
+        function createFlower(x, y) {
+            const flower = document.createElement('div');
+            flower.className = 'flower';
+            
+            // Randomize position slightly and set coordinates
+            const height = Math.floor(Math.random() * 100) + 50;
+            flower.style.left = (x - 20) + 'px';
+            flower.style.top = (y - height - 20) + 'px';
+
+            // Random Color
+            const randomColor = colors[Math.floor(Math.random() * colors.length)];
+
+            // Create HTML structure
+            flower.innerHTML = `
+                <div class="petals">
+                    <div class="petal" style="background: ${randomColor}"></div>
+                    <div class="petal" style="background: ${randomColor}"></div>
+                    <div class="petal" style="background: ${randomColor}"></div>
+                    <div class="petal" style="background: ${randomColor}"></div>
+                    <div class="petal" style="background: ${randomColor}"></div>
+                    <div class="center"></div>
+                </div>
+                <div class="stem" style="height: ${height}px">
+                    <div class="leaf"></div>
+                    <div class="leaf right"></div>
+                </div>
+            `;
+
+            document.body.appendChild(flower);
+
+            // Optional: Remove flower after a long time to keep performance smooth
+            setTimeout(() => {
+                // flower.remove(); 
+            }, 10000);
+        }
+
+        // Create some initial flowers
+        for(let i=0; i<5; i++) {
+            setTimeout(() => {
+                createFlower(Math.random() * window.innerWidth, window.innerHeight - 50);
+            }, i * 300);
+        }
+    </script>
+</body>
+</html>
